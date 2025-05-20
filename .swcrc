@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "exclude": [".+\\.(spec|int)\\.ts$", "mocks", "fixtures"],
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "target": "es2020",
+    "baseUrl": ".",
+    "paths": {
+        "@/utils/*": ["src/utils/*"],
+        "@/tests/*": ["tests/*"],
+        "@/utils": ["src/utils/index.ts"],
+        "@/modules/*": ["src/modules/*"],
+        "@/src/*": ["src/*"],
+        "@/env": ["src/env.ts"],
+        "@/types/*": ["src/types/*"],
+        "package": ["package.json"]
+    }
+  },
+  "module": {
+    "type": "commonjs"
+  },
+  "minify": true,
+  "sourceMaps": true
+}
