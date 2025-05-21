@@ -22,7 +22,9 @@ import { swaggerConfig } from './config/swagger.config';
 
 const app: Application = express();
 // set security HTTP headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for Swagger UI
+}));
 app.use(morgan('dev')); // Add HTTP request logging
 
 app.use(
@@ -69,7 +71,12 @@ app.use('/ping', (req: Request, res: Response) => {
 });
 
 // Swagger Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig));
+app.use(['/api-docs', '/api-docs/'], swaggerUi.serve);
+app.get(['/api-docs', '/api-docs/'], swaggerUi.setup(swaggerConfig, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Job Vacancy API Documentation"
+}));
 
 // add app routes
 route(app);
