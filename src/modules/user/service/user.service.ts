@@ -176,14 +176,14 @@ const login = async (req: any) => {
       },
       process.env.SECRET!,
       {
-        expiresIn: '15m', // Short-lived access token (15 minutes)
+        expiresIn: '60m', // Short-lived access token (15 minutes)
       }
     );
 
     // Generate refresh token (long-lived)
     const refreshToken = generateRefreshToken();
     const refreshTokenExpiry = new Date();
-    refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 7); // 7 days expiry
+    refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 90); // 7 days expiry
 
     // Store refresh token in user document
     await UserRepository.updateRefreshToken(
