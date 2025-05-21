@@ -122,10 +122,10 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = async (req: any, res: Response) => {
   try {
     const response: BaseResponse = await UserService.logout(
-      (req as any).user.id,
+      req.userData as unknown as UserJWT,
       req.body.refreshToken
     );
     res.status(200).json(response);
