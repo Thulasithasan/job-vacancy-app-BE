@@ -14,12 +14,16 @@ import mongoConnect from '@/src/dbs/mongo';
 import 'dotenv/config';
 import httpLogger from 'pino-http';
 import logger from '@/src/dbs/logger';
-import doc from '@/src/docs';
 import config from '@/config';
+import { swaggerDocs } from './config/swagger';
+import swaggerUi from 'swagger-ui-express';
+import morgan from 'morgan';
+import { swaggerConfig } from './config/swagger.config';
 
 const app: Application = express();
 // set security HTTP headers
 app.use(helmet());
+app.use(morgan('dev')); // Add HTTP request logging
 
 app.use(
   express.json({
@@ -52,9 +56,10 @@ if (process.env.environment === 'production') {
 if (config.env !== 'test') {
   mongoConnect();
 }
-// Swagger doc
+
+// Swagger documentation
 if (config.env !== 'prod') {
-  doc(app);
+  swaggerDocs(app);
 }
 
 // app.use(httpLogger({ logger }));
@@ -62,6 +67,9 @@ if (config.env !== 'prod') {
 app.use('/ping', (req: Request, res: Response) => {
   return res.status(200).send({ message: 'Pong ' });
 });
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig));
 
 // add app routes
 route(app);
