@@ -343,8 +343,10 @@ const refreshToken = async (refreshToken: string) => {
 };
 
 // Add new function to logout (invalidate refresh token)
-const logout = async (userId: string, refreshToken: string) => {
-  await UserRepository.removeRefreshToken(userId, refreshToken);
+const logout = async (  userData: UserJWT
+  , refreshToken: string) => {
+    console.log(userData.id);
+  await UserRepository.removeRefreshToken(userData.id, refreshToken);
   return { status: true };
 };
 
