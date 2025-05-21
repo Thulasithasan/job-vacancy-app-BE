@@ -9,8 +9,7 @@ const roleRouter: Router = Router();
 roleRouter.get('/list', checkAuth(RoleTypeEnum.ADMIN),
     getRoles);
 roleRouter.get('/:id', getRole);
-roleRouter.post('/', checkAuth(RoleTypeEnum.ADMIN),
-    createRole);
+roleRouter.post('/', createRole);
 roleRouter.put(
     '/:id',
     checkAuth(RoleTypeEnum.ADMIN),
