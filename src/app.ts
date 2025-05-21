@@ -26,7 +26,7 @@ const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     const allowedOrigins = [
       'http://localhost:3000',
-      'http://127.0.0.1:3000',
+      'http://3.109.123.217',
       undefined // Allow requests with no origin (like mobile apps or curl requests)
     ];
     
