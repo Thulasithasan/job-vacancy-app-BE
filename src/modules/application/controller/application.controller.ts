@@ -1,10 +1,16 @@
 import { Request, Response } from 'express';
 import { errorResponse } from '../../../utils/common.util';
 import applicationService from '../service/application.service';
+<<<<<<< HEAD
 import { ApplicationModel, ApplicationResponse } from '../data/dtos/application.dto';
 import { submitApplicationSchema } from './request/application.request';
 import { UserJWT } from '../../user/data/dtos/user.jwt.dto';
 import { uploadResumeService } from '../service/resume.service';
+=======
+import { ApplicationModel } from '../data/dtos/application.dto';
+import { submitApplicationSchema } from './request/application.request';
+import { UserJWT } from '../../user/data/dtos/user.jwt.dto';
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 
 interface AuthenticatedRequest extends Request {
   user?: UserJWT;
@@ -12,6 +18,7 @@ interface AuthenticatedRequest extends Request {
 
 export const getApplicationById = async (req: Request, res: Response) => {
   try {
+<<<<<<< HEAD
     const response: ApplicationResponse | null = await applicationService.getApplicationById(req.params.id);
     if (!response) {
       return res.status(404).json(errorResponse('Application not found'));
@@ -26,12 +33,21 @@ export const getApplicationById = async (req: Request, res: Response) => {
     res.status(200).json(applicationResponse);
   } catch (error: any) {
     console.error('Error in getApplicationById:', error);
+=======
+    const response: ApplicationModel | null = await applicationService.getApplicationById(req.params.id);
+    if (!response) {
+      return res.status(404).json(errorResponse('Application not found'));
+    }
+    res.status(200).json(response);
+  } catch (error: any) {
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
     res.status(400).json(errorResponse(error.message));
   }
 };
 
 export const getApplicationsWithPagination = async (req: Request, res: Response) => {
   try {
+<<<<<<< HEAD
     let page = 1;
     let limit = 10;
     let filters: any = {};
@@ -76,6 +92,12 @@ export const getApplicationsWithPagination = async (req: Request, res: Response)
     res.status(200).json(response);
   } catch (error: any) {
     console.error('Error in getApplicationsWithPagination:', error);
+=======
+    const { filters, pagination } = req.body;
+    const response = await applicationService.getApplicationsWithPagination(filters, pagination);
+    res.status(200).json(response);
+  } catch (error: any) {
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
     res.status(400).json(errorResponse(error.message));
   }
 };
@@ -86,6 +108,7 @@ export const submitApplication = async (req: Request, res: Response) => {
     const validatedData = submitApplicationSchema.parse(req.body);
     
     const response = await applicationService.submitApplication(validatedData);
+<<<<<<< HEAD
     if (!response) {
       return res.status(400).json(errorResponse('Failed to submit application'));
     }
@@ -95,6 +118,9 @@ export const submitApplication = async (req: Request, res: Response) => {
       id: response.id,
       resumeUrl: response.resumeUrl
     });
+=======
+    res.status(201).json({ status: true, id: response });
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   } catch (error: any) {
     if (error.name === 'ZodError') {
       return res.status(400).json(errorResponse(error.errors));
@@ -111,6 +137,7 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(400).json(errorResponse(error.message));
   }
+<<<<<<< HEAD
 };
 
 export const uploadResume = async (req: Request, res: Response) => {
@@ -124,4 +151,6 @@ export const uploadResume = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json(errorResponse(error.message));
   }
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 };

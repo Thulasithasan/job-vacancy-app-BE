@@ -1,23 +1,33 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Application } from 'express';
+<<<<<<< HEAD
 import { userSwagger } from '../modules/user/swagger/user.swagger';
 import { authSwagger } from '../modules/auth/swagger/auth.swagger';
 import { jobSwagger } from '../modules/job/swagger/job.swagger';
 import { applicationSwagger } from '../modules/application/swagger/application.swagger';
 import { questionSwagger } from '../modules/question/swagger/question.swagger';
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
+<<<<<<< HEAD
       title: 'Job Vacancy API',
       version: '1.0.0',
       description: 'API documentation for the Job Vacancy application'
+=======
+      title: 'Job Application API',
+      version: '1.0.0',
+      description: 'API documentation for the Job Application system',
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
     },
     servers: [
       {
         url: 'http://localhost:3000',
+<<<<<<< HEAD
         description: 'Development server'
       }
     ],
@@ -82,6 +92,13 @@ const options: swaggerJsdoc.Options = {
             }
           }
         },
+=======
+        description: 'Development server',
+      },
+    ],
+    components: {
+      schemas: {
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
         Application: {
           type: 'object',
           required: ['firstName', 'lastName', 'email', 'phone', 'jobId'],
@@ -131,6 +148,7 @@ const options: swaggerJsdoc.Options = {
             }
           }
         }
+<<<<<<< HEAD
       },
       responses: {
         Error400: {
@@ -171,6 +189,9 @@ const options: swaggerJsdoc.Options = {
       ...jobSwagger,
       ...applicationSwagger,
       ...questionSwagger
+=======
+      }
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
     }
   },
   apis: ['./src/modules/**/*.ts'], // Path to the API docs

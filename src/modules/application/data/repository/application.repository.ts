@@ -9,7 +9,10 @@ interface PaginationOptions {
 interface ApplicationFilters {
   jobId?: string;
   status?: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
+<<<<<<< HEAD
   search?: string;
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 }
 
 async function getApplicationById(id: string): Promise<ApplicationModel | null> {
@@ -25,18 +28,27 @@ async function getApplicationsWithPagination(
   const skip = (page - 1) * limit;
 
   // Build filter query
+<<<<<<< HEAD
   const query: any = { isDeleted: false };
   
   // Add job ID filter
+=======
+  const query: any = {};
+  
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   if (filters.jobId) {
     query.jobId = filters.jobId;
   }
   
+<<<<<<< HEAD
   // Add status filter
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   if (filters.status) {
     query.status = filters.status;
   }
 
+<<<<<<< HEAD
   // Add search filter
   if (filters.search) {
     query.$or = [
@@ -48,6 +60,8 @@ async function getApplicationsWithPagination(
 
   console.log('Query:', JSON.stringify(query, null, 2));
 
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   // Get total count for pagination
   const total = await ApplicationDto.countDocuments(query);
   const totalPages = Math.ceil(total / limit);
@@ -57,10 +71,14 @@ async function getApplicationsWithPagination(
     .populate('jobId')
     .skip(skip)
     .limit(limit)
+<<<<<<< HEAD
     .sort({ createdAt: -1 })
     .lean();
 
   console.log('Found applications:', applications.length);
+=======
+    .sort({ createdAt: -1 });
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 
   return {
     applications,

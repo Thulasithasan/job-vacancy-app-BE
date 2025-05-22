@@ -1,7 +1,12 @@
 import applicationRepository from '../data/repository/application.repository';
+<<<<<<< HEAD
 import { ApplicationModel, ApplicationResponse } from '../data/dtos/application.dto';
 import { SubmitApplicationRequest } from '../controller/request/application.request';
 import { getResumeUrl } from '@/src/middlewares/file.handler';
+=======
+import { ApplicationModel } from '../data/dtos/application.dto';
+import { SubmitApplicationRequest } from '../controller/request/application.request';
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 
 interface PaginationOptions {
   page: number;
@@ -13,6 +18,7 @@ interface ApplicationFilters {
   status?: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
 }
 
+<<<<<<< HEAD
 const getApplicationById = async (id: string): Promise<ApplicationResponse | null> => {
   const application = await applicationRepository.getApplicationById(id);
   
@@ -41,6 +47,10 @@ const getApplicationById = async (id: string): Promise<ApplicationResponse | nul
   }
   
   return applicationResponse;
+=======
+const getApplicationById = async (id: string): Promise<ApplicationModel | null> => {
+  return await applicationRepository.getApplicationById(id);
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 };
 
 const getApplicationsWithPagination = async (
@@ -52,6 +62,7 @@ const getApplicationsWithPagination = async (
 
 const submitApplication = async (
   applicationData: SubmitApplicationRequest
+<<<<<<< HEAD
 ): Promise<{ id: string; resumeUrl: string } | null> => {
   const applicationId = await applicationRepository.submitApplication(applicationData);
   
@@ -69,6 +80,10 @@ const submitApplication = async (
     console.error('Error generating resume URL:', error);
     return { id: applicationId, resumeUrl: '' };
   }
+=======
+): Promise<string | null> => {
+  return await applicationRepository.submitApplication(applicationData);
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 };
 
 const updateApplicationStatus = async (id: string, status: string): Promise<ApplicationModel | null> => {

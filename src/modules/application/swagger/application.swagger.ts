@@ -7,6 +7,7 @@ const getExampleResponse = (example: any) => formatExampleResponse(example);
 export const applicationSwagger = {
   /**
    * @swagger
+<<<<<<< HEAD
    * components:
    *   schemas:
    *     Application:
@@ -148,6 +149,30 @@ export const applicationSwagger = {
    *         status: "pending",
    *         createdAt: "2024-03-20T10:00:00Z",
    *         updatedAt: "2024-03-20T10:00:00Z"
+=======
+   * /api/v1/application/submit-application:
+   *   post:
+   *     summary: Submit a new job application
+   *     description: |
+   *       Submits a new job application with applicant details and answers to job-specific questions.
+   *       ${getCommandDetails('Post')}
+   *       
+   *       ${getExampleRequest({
+   *         firstName: "John",
+   *         lastName: "Doe",
+   *         email: "john@example.com",
+   *         phone: "+1234567890",
+   *         jobId: "job123",
+   *         answers: [{
+   *           questionId: "q1",
+   *           answer: "I have 5 years of experience in web development"
+   *         }]
+   *       })}
+   *       
+   *       ${getExampleResponse({
+   *         status: true,
+   *         id: "app123"
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       })}
    *     tags: [Applications]
    *     requestBody:
@@ -155,6 +180,7 @@ export const applicationSwagger = {
    *       content:
    *         application/json:
    *           schema:
+<<<<<<< HEAD
    *             type: object
    *             required:
    *               - jobId
@@ -185,13 +211,25 @@ export const applicationSwagger = {
    *                       type: string
    *                     answer:
    *                       type: string
+=======
+   *             $ref: '#/components/schemas/Application'
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *     responses:
    *       201:
    *         description: Application submitted successfully
    *         content:
    *           application/json:
    *             schema:
+<<<<<<< HEAD
    *               $ref: '#/components/schemas/Application'
+=======
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: boolean
+   *                 id:
+   *                   type: string
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       400:
    *         $ref: '#/components/responses/Error400'
    */
@@ -202,6 +240,7 @@ export const applicationSwagger = {
    *   get:
    *     summary: Get application by ID
    *     description: |
+<<<<<<< HEAD
    *       Retrieves a specific application by its ID.
    *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
@@ -222,6 +261,24 @@ export const applicationSwagger = {
    *         status: "pending",
    *         createdAt: "2024-03-20T10:00:00Z",
    *         updatedAt: "2024-03-20T10:00:00Z"
+=======
+   *       Retrieves a specific job application by its ID.
+   *       ${getCommandDetails('Get')}
+   *       
+   *       ${getExampleResponse({
+   *         id: "app123",
+   *         firstName: "John",
+   *         lastName: "Doe",
+   *         email: "john@example.com",
+   *         phone: "+1234567890",
+   *         jobId: "job123",
+   *         status: "pending",
+   *         answers: [{
+   *           questionId: "q1",
+   *           answer: "I have 5 years of experience in web development"
+   *         }],
+   *         createdAt: "2024-03-20T10:00:00Z"
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       })}
    *     tags: [Applications]
    *     parameters:
@@ -233,7 +290,11 @@ export const applicationSwagger = {
    *         description: Application ID
    *     responses:
    *       200:
+<<<<<<< HEAD
    *         description: Application details retrieved successfully
+=======
+   *         description: Application details
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *         content:
    *           application/json:
    *             schema:
@@ -257,7 +318,11 @@ export const applicationSwagger = {
    *       ```
    *       
    *       ${getExampleResponse({
+<<<<<<< HEAD
    *         applications: [{
+=======
+   *         data: [{
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *           id: "app123",
    *           firstName: "John",
    *           lastName: "Doe",
@@ -265,10 +330,19 @@ export const applicationSwagger = {
    *           status: "pending",
    *           jobId: "job123"
    *         }],
+<<<<<<< HEAD
    *         total: 100,
    *         page: 1,
    *         limit: 10,
    *         totalPages: 10
+=======
+   *         pagination: {
+   *           total: 100,
+   *           page: 1,
+   *           limit: 10,
+   *           totalPages: 10
+   *         }
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       })}
    *     tags: [Applications]
    *     parameters:
@@ -276,7 +350,11 @@ export const applicationSwagger = {
    *         name: filters[status]
    *         schema:
    *           type: string
+<<<<<<< HEAD
    *           enum: [pending, reviewed, shortlisted, rejected, accepted]
+=======
+   *           enum: [pending, reviewed, shortlisted, rejected]
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *         description: Filter by application status
    *       - in: query
    *         name: filters[search]
@@ -306,6 +384,7 @@ export const applicationSwagger = {
    *             schema:
    *               type: object
    *               properties:
+<<<<<<< HEAD
    *                 applications:
    *                   type: array
    *                   items:
@@ -318,6 +397,14 @@ export const applicationSwagger = {
    *                   type: integer
    *                 totalPages:
    *                   type: integer
+=======
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/Application'
+   *                 pagination:
+   *                   $ref: '#/components/schemas/Pagination'
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       400:
    *         $ref: '#/components/responses/Error400'
    */
@@ -328,6 +415,7 @@ export const applicationSwagger = {
    *   put:
    *     summary: Update application status
    *     description: |
+<<<<<<< HEAD
    *       Updates the status of an application (Admin only).
    *       ${formatCommandDetails(commonCommandDetails.Put)}
    *       
@@ -339,6 +427,19 @@ export const applicationSwagger = {
    *         id: "app123",
    *         status: "reviewed",
    *         updatedAt: "2024-03-20T11:00:00Z"
+=======
+   *       Updates the status of a job application.
+   *       ${getCommandDetails('Put')}
+   *       
+   *       ${getExampleRequest({
+   *         status: "shortlisted"
+   *       })}
+   *       
+   *       ${getExampleResponse({
+   *         id: "app123",
+   *         status: "shortlisted",
+   *         updatedAt: "2024-03-20T10:00:00Z"
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *       })}
    *     tags: [Applications]
    *     security:
@@ -364,7 +465,11 @@ export const applicationSwagger = {
    *                 enum: [pending, reviewed, shortlisted, rejected]
    *     responses:
    *       200:
+<<<<<<< HEAD
    *         description: Application status updated successfully
+=======
+   *         description: Status updated successfully
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
    *         content:
    *           application/json:
    *             schema:
@@ -373,6 +478,7 @@ export const applicationSwagger = {
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
+<<<<<<< HEAD
    *       403:
    *         description: Forbidden - Admin access required
    *       404:
@@ -426,4 +532,9 @@ export const applicationSwagger = {
    *       400:
    *         $ref: '#/components/responses/Error400'
    */
+=======
+   *       404:
+   *         $ref: '#/components/responses/Error404'
+   */
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 }; 

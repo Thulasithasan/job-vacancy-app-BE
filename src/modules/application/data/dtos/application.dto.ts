@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import mongoose, { Schema, model, ObjectId, Document } from 'mongoose';
+=======
+import mongoose, { Schema, model, ObjectId } from 'mongoose';
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 import { BaseModel } from '../../../base/data/dtos/baseModel';
 
 interface QuestionAnswer {
@@ -6,7 +10,11 @@ interface QuestionAnswer {
   answer: string;
 }
 
+<<<<<<< HEAD
 export interface ApplicationModel extends Document {
+=======
+export interface ApplicationModel extends BaseModel {
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   jobId: ObjectId;
   firstName: string;
   lastName: string;
@@ -14,6 +22,7 @@ export interface ApplicationModel extends Document {
   phoneNumber: string;
   status: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
   resume: string;
+<<<<<<< HEAD
   resumeUrl?: string;
   coverLetter: string;
   questionAnswers: Array<{
@@ -29,12 +38,22 @@ export interface ApplicationModel extends Document {
 
 export interface ApplicationResponse extends Omit<ApplicationModel, keyof Document> {
   resumeSignedUrl?: string;
+=======
+  coverLetter: string;
+  questionAnswers: QuestionAnswer[];
+  applicationDate: Date;
+  notes?: string;
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 }
 
 const ApplicationSchema = new Schema<ApplicationModel>(
   {
     jobId: {
+<<<<<<< HEAD
       type: Schema.Types.ObjectId,
+=======
+      type: mongoose.Schema.Types.ObjectId,
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
       ref: 'Job',
       required: true,
       index: true
@@ -70,9 +89,12 @@ const ApplicationSchema = new Schema<ApplicationModel>(
       type: String,
       required: true
     },
+<<<<<<< HEAD
     resumeUrl: {
       type: String
     },
+=======
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
     coverLetter: {
       type: String,
       required: true,
@@ -96,6 +118,7 @@ const ApplicationSchema = new Schema<ApplicationModel>(
     notes: {
       type: String
     },
+<<<<<<< HEAD
     isDeleted: { type: Boolean, default: false },
     createdAt: {
       type: Date,
@@ -105,6 +128,9 @@ const ApplicationSchema = new Schema<ApplicationModel>(
       type: Date,
       default: Date.now
     }
+=======
+    isDeleted: { type: Boolean, default: false }
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
   },
   { timestamps: true }
 );

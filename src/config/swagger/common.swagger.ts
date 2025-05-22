@@ -98,6 +98,7 @@ export const commonParameters = {
 
 export const commonCommandDetails = {
   Get: {
+<<<<<<< HEAD
     method: "GET",
     description: "Retrieves data from the server"
   },
@@ -344,4 +345,54 @@ export const commonSwagger = {
    *       scheme: bearer
    *       bearerFormat: JWT
    */
+=======
+    method: 'GET',
+    authentication: 'Not required',
+    rateLimit: '100 requests per minute',
+    responseTime: '< 200ms'
+  },
+  Post: {
+    method: 'POST',
+    authentication: 'Not required',
+    rateLimit: '10 requests per minute',
+    responseTime: '< 1s'
+  },
+  Put: {
+    method: 'PUT',
+    authentication: 'Required (Admin only)',
+    rateLimit: '50 requests per minute',
+    responseTime: '< 300ms'
+  },
+  Delete: {
+    method: 'DELETE',
+    authentication: 'Required (Admin only)',
+    rateLimit: '50 requests per minute',
+    responseTime: '< 300ms'
+  }
+};
+
+export const formatCommandDetails = (details: typeof commonCommandDetails[keyof typeof commonCommandDetails]) => {
+  return `
+Command Details:
+- Method: ${details.method}
+- Authentication: ${details.authentication}
+- Rate Limit: ${details.rateLimit}
+- Response Time: ${details.responseTime}`;
+};
+
+export const formatExampleResponse = (example: any) => {
+  return `
+Example Response:
+\`\`\`json
+${JSON.stringify(example, null, 2)}
+\`\`\``;
+};
+
+export const formatExampleRequest = (example: any) => {
+  return `
+Example Request:
+\`\`\`json
+${JSON.stringify(example, null, 2)}
+\`\`\``;
+>>>>>>> 1d3b753f8957cef9c51f4eab57fffacf12dff3f5
 }; 
