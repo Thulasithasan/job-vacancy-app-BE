@@ -9,22 +9,28 @@ export const questionSwagger = {
    * @swagger
    * /api/v1/question/create-question:
    *   post:
-   *     summary: Create a new question for job applications
+   *     summary: Create new question
    *     description: |
-   *       Creates a new question that can be used in job applications.
-   *       ${getCommandDetails('Post')}
+   *       Creates a new question for job applications (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
-   *       ${getExampleRequest({
-   *         jobId: "job123",
-   *         question: "Describe your experience with TypeScript",
+   *       ${formatExampleRequest({
+   *         text: "What is your experience with TypeScript?",
    *         type: "text",
    *         required: true,
-   *         order: 1
+   *         order: 1,
+   *         status: "active"
    *       })}
    *       
-   *       ${getExampleResponse({
-   *         status: true,
-   *         id: "q123"
+   *       ${formatExampleResponse({
+   *         id: "q1",
+   *         text: "What is your experience with TypeScript?",
+   *         type: "text",
+   *         required: true,
+   *         order: 1,
+   *         status: "active",
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
    *     tags: [Questions]
    *     security:
@@ -36,70 +42,62 @@ export const questionSwagger = {
    *           schema:
    *             type: object
    *             required:
-   *               - jobId
-   *               - question
+   *               - text
    *               - type
+   *               - required
+   *               - order
    *             properties:
-   *               jobId:
+   *               text:
    *                 type: string
-   *                 description: ID of the job this question belongs to
-   *               question:
-   *                 type: string
-   *                 description: The question text
    *               type:
    *                 type: string
    *                 enum: [text, multiple-choice, single-choice]
-   *                 description: Type of question
    *               required:
    *                 type: boolean
-   *                 default: true
-   *                 description: Whether the question is mandatory
    *               order:
    *                 type: integer
-   *                 minimum: 1
-   *                 description: Display order of the question
    *               options:
    *                 type: array
    *                 items:
    *                   type: string
-   *                 description: Options for multiple/single choice questions
+   *               status:
+   *                 type: string
+   *                 enum: [active, inactive]
    *     responses:
    *       201:
    *         description: Question created successfully
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: boolean
-   *                 id:
-   *                   type: string
+   *               $ref: '#/components/schemas/Question'
    *       400:
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    */
 
   /**
    * @swagger
    * /api/v1/question/get-questions/{jobId}:
    *   get:
-   *     summary: Get questions for a job
+   *     summary: Get questions by job ID
    *     description: |
-   *       Retrieves all questions associated with a specific job.
-   *       ${getCommandDetails('Get')}
+   *       Retrieves all questions for a specific job.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
-   *       ${getExampleResponse({
-   *         questions: [{
-   *           id: "q123",
-   *           jobId: "job123",
-   *           question: "Describe your experience with TypeScript",
-   *           type: "text",
-   *           required: true,
-   *           order: 1,
-   *           createdAt: "2024-03-20T10:00:00Z"
-   *         }]
+   *       ${formatExampleResponse({
+   *         questions: [
+   *           {
+   *             id: "q1",
+   *             text: "What is your experience with TypeScript?",
+   *             type: "text",
+   *             required: true,
+   *             order: 1,
+   *             status: "active"
+   *           }
+   *         ]
    *       })}
    *     tags: [Questions]
    *     parameters:
@@ -111,7 +109,7 @@ export const questionSwagger = {
    *         description: Job ID
    *     responses:
    *       200:
-   *         description: List of questions
+   *         description: Questions retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -127,32 +125,31 @@ export const questionSwagger = {
 
   /**
    * @swagger
-   * /api/v1/question/update-question/{id}:
+   * /api/v1/question/add-answer/{questionId}:
    *   put:
-   *     summary: Update a question
+   *     summary: Add answer to question
    *     description: |
-   *       Updates an existing question's details.
-   *       ${getCommandDetails('Put')}
+   *       Adds an answer to a specific question.
+   *       ${formatCommandDetails(commonCommandDetails.Put)}
    *       
-   *       ${getExampleRequest({
-   *         question: "Updated question text",
-   *         required: false,
-   *         order: 2
+   *       ${formatExampleRequest({
+   *         answer: "I have 5 years of experience with TypeScript"
    *       })}
    *       
-   *       ${getExampleResponse({
-   *         id: "q123",
-   *         question: "Updated question text",
-   *         required: false,
-   *         order: 2,
+   *       ${formatExampleResponse({
+   *         id: "q1",
+   *         text: "What is your experience with TypeScript?",
+   *         type: "text",
+   *         required: true,
+   *         order: 1,
+   *         status: "active",
+   *         answer: "I have 5 years of experience with TypeScript",
    *         updatedAt: "2024-03-20T11:00:00Z"
    *       })}
    *     tags: [Questions]
-   *     security:
-   *       - bearerAuth: []
    *     parameters:
    *       - in: path
-   *         name: id
+   *         name: questionId
    *         required: true
    *         schema:
    *           type: string
@@ -163,32 +160,20 @@ export const questionSwagger = {
    *         application/json:
    *           schema:
    *             type: object
+   *             required:
+   *               - answer
    *             properties:
-   *               question:
+   *               answer:
    *                 type: string
-   *               type:
-   *                 type: string
-   *                 enum: [text, multiple-choice, single-choice]
-   *               required:
-   *                 type: boolean
-   *               order:
-   *                 type: integer
-   *                 minimum: 1
-   *               options:
-   *                 type: array
-   *                 items:
-   *                   type: string
    *     responses:
    *       200:
-   *         description: Question updated successfully
+   *         description: Answer added successfully
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Question'
    *       400:
    *         $ref: '#/components/responses/Error400'
-   *       401:
-   *         description: Unauthorized
    *       404:
    *         $ref: '#/components/responses/Error404'
    */
@@ -197,12 +182,12 @@ export const questionSwagger = {
    * @swagger
    * /api/v1/question/delete-question/{id}:
    *   delete:
-   *     summary: Delete a question
+   *     summary: Delete question
    *     description: |
-   *       Deletes a question from the system.
-   *       ${getCommandDetails('Delete')}
+   *       Soft deletes a question (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Delete)}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         status: true,
    *         message: "Question deleted successfully"
    *       })}
@@ -230,6 +215,8 @@ export const questionSwagger = {
    *                   type: string
    *       401:
    *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    *       404:
    *         $ref: '#/components/responses/Error404'
    */

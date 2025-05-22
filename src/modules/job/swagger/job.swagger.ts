@@ -9,28 +9,42 @@ export const jobSwagger = {
    * @swagger
    * /api/v1/job/create-job:
    *   post:
-   *     summary: Create a new job posting
+   *     summary: Create new job
    *     description: |
-   *       Creates a new job posting with the provided details.
-   *       ${getCommandDetails('Post')}
+   *       Creates a new job posting (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
-   *       ${getExampleRequest({
+   *       ${formatExampleRequest({
    *         title: "Senior Software Engineer",
    *         description: "We are looking for an experienced software engineer...",
    *         requirements: ["5+ years of experience", "Strong knowledge of TypeScript"],
-   *         jobType: "full-time",
-   *         location: "New York, NY",
-   *         remote: true,
+   *         location: "Remote",
+   *         type: "full-time",
+   *         workLocation: "remote",
    *         salary: {
-   *           min: 120000,
+   *           min: 100000,
    *           max: 150000,
    *           currency: "USD"
-   *         }
+   *         },
+   *         status: "open"
    *       })}
    *       
-   *       ${getExampleResponse({
-   *         status: true,
-   *         id: "job123"
+   *       ${formatExampleResponse({
+   *         id: "job123",
+   *         title: "Senior Software Engineer",
+   *         description: "We are looking for an experienced software engineer...",
+   *         requirements: ["5+ years of experience", "Strong knowledge of TypeScript"],
+   *         location: "Remote",
+   *         type: "full-time",
+   *         workLocation: "remote",
+   *         salary: {
+   *           min: 100000,
+   *           max: 150000,
+   *           currency: "USD"
+   *         },
+   *         status: "open",
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
    *     tags: [Jobs]
    *     security:
@@ -44,8 +58,10 @@ export const jobSwagger = {
    *             required:
    *               - title
    *               - description
-   *               - jobType
+   *               - requirements
    *               - location
+   *               - type
+   *               - workLocation
    *             properties:
    *               title:
    *                 type: string
@@ -55,13 +71,15 @@ export const jobSwagger = {
    *                 type: array
    *                 items:
    *                   type: string
-   *               jobType:
-   *                 type: string
-   *                 enum: [full-time, part-time, contract, internship, freelance]
    *               location:
    *                 type: string
-   *               remote:
-   *                 type: boolean
+   *               type:
+   *                 type: string
+   *                 enum: [full-time, part-time, contract, internship]
+   *               workLocation:
+   *                 type: string
+   *                 enum: [remote, onsite, hybrid]
+   *                 description: Type of work location
    *               salary:
    *                 type: object
    *                 properties:
@@ -71,22 +89,23 @@ export const jobSwagger = {
    *                     type: number
    *                   currency:
    *                     type: string
+   *               status:
+   *                 type: string
+   *                 enum: [open, closed, paused]
+   *                 description: Job status
    *     responses:
    *       201:
    *         description: Job created successfully
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: boolean
-   *                 id:
-   *                   type: string
+   *               $ref: '#/components/schemas/Job'
    *       400:
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    */
 
   /**
@@ -95,24 +114,25 @@ export const jobSwagger = {
    *   get:
    *     summary: Get job by ID
    *     description: |
-   *       Retrieves a specific job posting by its ID.
-   *       ${getCommandDetails('Get')}
+   *       Retrieves a specific job by its ID.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         id: "job123",
    *         title: "Senior Software Engineer",
    *         description: "We are looking for an experienced software engineer...",
    *         requirements: ["5+ years of experience", "Strong knowledge of TypeScript"],
-   *         jobType: "full-time",
-   *         location: "New York, NY",
-   *         remote: true,
-   *         status: "open",
+   *         location: "Remote",
+   *         type: "full-time",
+   *         workLocation: "remote",
    *         salary: {
-   *           min: 120000,
+   *           min: 100000,
    *           max: 150000,
    *           currency: "USD"
    *         },
-   *         createdAt: "2024-03-20T10:00:00Z"
+   *         status: "open",
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
    *     tags: [Jobs]
    *     parameters:
@@ -124,7 +144,7 @@ export const jobSwagger = {
    *         description: Job ID
    *     responses:
    *       200:
-   *         description: Job details
+   *         description: Job details retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -137,87 +157,76 @@ export const jobSwagger = {
    * @swagger
    * /api/v1/job/get-jobs-with-pagination:
    *   get:
-   *     summary: Get jobs with pagination and filters
+   *     summary: Get all jobs
    *     description: |
-   *       Retrieves a paginated list of job postings with optional filtering.
-   *       ${getCommandDetails('Get')}
+   *       Retrieves a list of all active jobs.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
-   *       Example Request:
-   *       ```
-   *       GET /api/v1/job/get-jobs-with-pagination?filters[status]=open&filters[jobType]=full-time&pagination[page]=1&pagination[limit]=10
-   *       ```
-   *       
-   *       ${getExampleResponse({
-   *         data: [{
-   *           id: "job123",
-   *           title: "Senior Software Engineer",
-   *           jobType: "full-time",
-   *           location: "New York, NY",
-   *           remote: true,
-   *           status: "open"
-   *         }],
-   *         pagination: {
-   *           total: 100,
-   *           page: 1,
-   *           limit: 10,
-   *           totalPages: 10
-   *         }
+   *       ${formatExampleResponse({
+   *         jobs: [
+   *           {
+   *             id: "job123",
+   *             title: "Senior Software Engineer",
+   *             location: "Remote",
+   *             type: "full-time",
+   *             workLocation: "remote",
+   *             status: "open",
+   *             createdAt: "2024-03-20T10:00:00Z"
+   *           }
+   *         ],
+   *         total: 1
    *       })}
    *     tags: [Jobs]
    *     parameters:
    *       - in: query
-   *         name: filters[status]
+   *         name: page
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *         description: Page number
+   *       - in: query
+   *         name: limit
+   *         schema:
+   *           type: integer
+   *           default: 10
+   *         description: Number of items per page
+   *       - in: query
+   *         name: type
+   *         schema:
+   *           type: string
+   *           enum: [full-time, part-time, contract, internship]
+   *         description: Filter by job type
+   *       - in: query
+   *         name: workLocation
+   *         schema:
+   *           type: string
+   *           enum: [remote, onsite, hybrid]
+   *         description: Filter by work location type
+   *       - in: query
+   *         name: location
+   *         schema:
+   *           type: string
+   *         description: Filter by job location
+   *       - in: query
+   *         name: status
    *         schema:
    *           type: string
    *           enum: [open, closed, paused]
    *         description: Filter by job status
-   *       - in: query
-   *         name: filters[jobType]
-   *         schema:
-   *           type: string
-   *           enum: [full-time, part-time, contract, internship, freelance]
-   *         description: Filter by job type
-   *       - in: query
-   *         name: filters[remote]
-   *         schema:
-   *           type: boolean
-   *         description: Filter by remote availability
-   *       - in: query
-   *         name: filters[search]
-   *         schema:
-   *           type: string
-   *         description: Search in job title or description
-   *       - in: query
-   *         name: pagination[page]
-   *         schema:
-   *           type: integer
-   *           minimum: 1
-   *           default: 1
-   *         description: Page number
-   *       - in: query
-   *         name: pagination[limit]
-   *         schema:
-   *           type: integer
-   *           minimum: 1
-   *           maximum: 100
-   *           default: 10
-   *         description: Number of items per page
    *     responses:
    *       200:
-   *         description: List of jobs with pagination
+   *         description: List of jobs retrieved successfully
    *         content:
    *           application/json:
    *             schema:
    *               type: object
    *               properties:
-   *                 data:
+   *                 jobs:
    *                   type: array
    *                   items:
    *                     $ref: '#/components/schemas/Job'
-   *                 pagination:
-   *                   $ref: '#/components/schemas/Pagination'
-   *       400:
-   *         $ref: '#/components/responses/Error400'
+   *                 total:
+   *                   type: number
    */
 
   /**
@@ -226,15 +235,16 @@ export const jobSwagger = {
    *   put:
    *     summary: Update job status
    *     description: |
-   *       Updates the status of a job posting.
-   *       ${getCommandDetails('Put')}
+   *       Updates the status of an existing job (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Put)}
    *       
-   *       ${getExampleRequest({
+   *       ${formatExampleRequest({
    *         status: "closed"
    *       })}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         id: "job123",
+   *         title: "Senior Software Engineer",
    *         status: "closed",
    *         updatedAt: "2024-03-20T11:00:00Z"
    *       })}
@@ -260,9 +270,10 @@ export const jobSwagger = {
    *               status:
    *                 type: string
    *                 enum: [open, closed, paused]
+   *                 description: New job status
    *     responses:
    *       200:
-   *         description: Status updated successfully
+   *         description: Job status updated successfully
    *         content:
    *           application/json:
    *             schema:
@@ -271,6 +282,8 @@ export const jobSwagger = {
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    *       404:
    *         $ref: '#/components/responses/Error404'
    */

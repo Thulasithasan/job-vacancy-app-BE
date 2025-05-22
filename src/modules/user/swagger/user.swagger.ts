@@ -7,21 +7,96 @@ const getExampleResponse = (example: any) => formatExampleResponse(example);
 export const userSwagger = {
   /**
    * @swagger
-   * /api/v1/user/register:
+   * /api/v1/user/profile:
+   *   get:
+   *     summary: Get user profile
+   *     description: |
+   *       Retrieves the profile of the authenticated user.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
+   *       
+   *       ${formatExampleResponse({
+   *         id: "user123",
+   *         email: "john@example.com",
+   *         firstName: "John",
+   *         lastName: "Doe",
+   *         role: "user",
+   *         createdAt: "2024-03-20T10:00:00Z"
+   *       })}
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: User profile retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   *       401:
+   *         description: Unauthorized
+   */
+
+  /**
+   * @swagger
+   * /api/v1/user/list:
+   *   get:
+   *     summary: Get all users
+   *     description: |
+   *       Retrieves a list of all users (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
+   *       
+   *       ${formatExampleResponse({
+   *         users: [
+   *           {
+   *             id: "user123",
+   *             email: "john@example.com",
+   *             firstName: "John",
+   *             lastName: "Doe",
+   *             role: "user"
+   *           }
+   *         ],
+   *         total: 1
+   *       })}
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: List of users retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 users:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/User'
+   *                 total:
+   *                   type: number
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
+   */
+
+  /**
+   * @swagger
+   * /api/v1/user/signup:
    *   post:
    *     summary: Register a new user
    *     description: |
    *       Creates a new user account with the provided details.
-   *       ${getCommandDetails('Post')}
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
-   *       ${getExampleRequest({
+   *       ${formatExampleRequest({
    *         email: "john@example.com",
    *         password: "securePassword123",
    *         firstName: "John",
    *         lastName: "Doe"
    *       })}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         status: true,
    *         id: "user123"
    *       })}
@@ -66,110 +141,12 @@ export const userSwagger = {
 
   /**
    * @swagger
-   * /api/v1/user/login:
+   * /api/v1/user/update:
    *   post:
-   *     summary: User login
+   *     summary: Update user profile
    *     description: |
-   *       Authenticates a user and returns a JWT token.
+   *       Updates the profile of the authenticated user.
    *       ${formatCommandDetails(commonCommandDetails.Post)}
-   *       
-   *       ${formatExampleRequest({
-   *         email: "john@example.com",
-   *         password: "securePassword123"
-   *       })}
-   *       
-   *       ${formatExampleResponse({
-   *         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-   *         user: {
-   *           id: "user123",
-   *           email: "john@example.com",
-   *           firstName: "John",
-   *           lastName: "Doe",
-   *           role: "user"
-   *         }
-   *       })}
-   *     tags: [Users]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             required:
-   *               - email
-   *               - password
-   *             properties:
-   *               email:
-   *                 type: string
-   *                 format: email
-   *               password:
-   *                 type: string
-   *     responses:
-   *       200:
-   *         description: Login successful
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 token:
-   *                   type: string
-   *                 user:
-   *                   $ref: '#/components/schemas/User'
-   *       400:
-   *         $ref: '#/components/responses/Error400'
-   *       401:
-   *         description: Invalid credentials
-   */
-
-  /**
-   * @swagger
-   * /api/v1/user/get-user/{id}:
-   *   get:
-   *     summary: Get user by ID
-   *     description: |
-   *       Retrieves a specific user's details by their ID.
-   *       ${formatCommandDetails(commonCommandDetails.Get)}
-   *       
-   *       ${formatExampleResponse({
-   *         id: "user123",
-   *         email: "john@example.com",
-   *         firstName: "John",
-   *         lastName: "Doe",
-   *         role: "user",
-   *         createdAt: "2024-03-20T10:00:00Z"
-   *       })}
-   *     tags: [Users]
-   *     security:
-   *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         required: true
-   *         schema:
-   *           type: string
-   *         description: User ID
-   *     responses:
-   *       200:
-   *         description: User details
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/User'
-   *       401:
-   *         description: Unauthorized
-   *       404:
-   *         $ref: '#/components/responses/Error404'
-   */
-
-  /**
-   * @swagger
-   * /api/v1/user/update-user/{id}:
-   *   put:
-   *     summary: Update user details
-   *     description: |
-   *       Updates the details of an existing user.
-   *       ${formatCommandDetails(commonCommandDetails.Put)}
    *       
    *       ${formatExampleRequest({
    *         firstName: "John",
@@ -187,13 +164,6 @@ export const userSwagger = {
    *     tags: [Users]
    *     security:
    *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         required: true
-   *         schema:
-   *           type: string
-   *         description: User ID
    *     requestBody:
    *       required: true
    *       content:
@@ -210,7 +180,7 @@ export const userSwagger = {
    *                 format: email
    *     responses:
    *       200:
-   *         description: User updated successfully
+   *         description: User profile updated successfully
    *         content:
    *           application/json:
    *             schema:
@@ -219,27 +189,32 @@ export const userSwagger = {
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
-   *       404:
-   *         $ref: '#/components/responses/Error404'
    */
 
   /**
    * @swagger
-   * /api/v1/user/change-password:
-   *   put:
-   *     summary: Change user password
+   * /api/v1/user/update/admin:
+   *   post:
+   *     summary: Admin update user
    *     description: |
-   *       Changes the password of the authenticated user.
-   *       ${formatCommandDetails(commonCommandDetails.Put)}
+   *       Updates a user's details (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
    *       ${formatExampleRequest({
-   *         currentPassword: "oldPassword123",
-   *         newPassword: "newSecurePassword456"
+   *         userId: "user123",
+   *         firstName: "John",
+   *         lastName: "Smith",
+   *         email: "john.smith@example.com",
+   *         role: "user"
    *       })}
    *       
    *       ${formatExampleResponse({
-   *         status: true,
-   *         message: "Password changed successfully"
+   *         id: "user123",
+   *         email: "john.smith@example.com",
+   *         firstName: "John",
+   *         lastName: "Smith",
+   *         role: "user",
+   *         updatedAt: "2024-03-20T11:00:00Z"
    *       })}
    *     tags: [Users]
    *     security:
@@ -251,29 +226,32 @@ export const userSwagger = {
    *           schema:
    *             type: object
    *             required:
-   *               - currentPassword
-   *               - newPassword
+   *               - userId
    *             properties:
-   *               currentPassword:
+   *               userId:
    *                 type: string
-   *               newPassword:
+   *               firstName:
    *                 type: string
-   *                 minLength: 8
+   *               lastName:
+   *                 type: string
+   *               email:
+   *                 type: string
+   *                 format: email
+   *               role:
+   *                 type: string
+   *                 enum: [user, admin]
    *     responses:
    *       200:
-   *         description: Password changed successfully
+   *         description: User updated successfully
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: boolean
-   *                 message:
-   *                   type: string
+   *               $ref: '#/components/schemas/User'
    *       400:
    *         $ref: '#/components/responses/Error400'
    *       401:
-   *         description: Unauthorized or invalid current password
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    */
 }; 

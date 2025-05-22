@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, ObjectId } from 'mongoose';
+import mongoose, { Schema, model, ObjectId, Document } from 'mongoose';
 import { BaseModel } from '../../../base/data/dtos/baseModel';
 
 interface QuestionAnswer {
@@ -6,7 +6,7 @@ interface QuestionAnswer {
   answer: string;
 }
 
-export interface ApplicationModel extends BaseModel {
+export interface ApplicationModel extends Document {
   jobId: ObjectId;
   firstName: string;
   lastName: string;
@@ -14,16 +14,27 @@ export interface ApplicationModel extends BaseModel {
   phoneNumber: string;
   status: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
   resume: string;
+  resumeUrl?: string;
   coverLetter: string;
-  questionAnswers: QuestionAnswer[];
+  questionAnswers: Array<{
+    question: string;
+    answer: string;
+  }>;
   applicationDate: Date;
   notes?: string;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ApplicationResponse extends Omit<ApplicationModel, keyof Document> {
+  resumeSignedUrl?: string;
 }
 
 const ApplicationSchema = new Schema<ApplicationModel>(
   {
     jobId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Job',
       required: true,
       index: true
@@ -59,6 +70,9 @@ const ApplicationSchema = new Schema<ApplicationModel>(
       type: String,
       required: true
     },
+    resumeUrl: {
+      type: String
+    },
     coverLetter: {
       type: String,
       required: true,
@@ -82,7 +96,15 @@ const ApplicationSchema = new Schema<ApplicationModel>(
     notes: {
       type: String
     },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    }
   },
   { timestamps: true }
 );

@@ -7,28 +7,147 @@ const getExampleResponse = (example: any) => formatExampleResponse(example);
 export const applicationSwagger = {
   /**
    * @swagger
+   * components:
+   *   schemas:
+   *     Application:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: string
+   *           description: Application ID
+   *         jobId:
+   *           type: string
+   *           description: ID of the job being applied for
+   *         firstName:
+   *           type: string
+   *           description: Applicant's first name
+   *         lastName:
+   *           type: string
+   *           description: Applicant's last name
+   *         email:
+   *           type: string
+   *           format: email
+   *           description: Applicant's email address
+   *         phoneNumber:
+   *           type: string
+   *           description: Applicant's phone number
+   *         status:
+   *           type: string
+   *           enum: [pending, reviewed, shortlisted, rejected, accepted]
+   *           description: Current status of the application
+   *         resume:
+   *           type: string
+   *           description: Path to the uploaded resume file
+   *         resumeSignedUrl:
+   *           type: string
+   *           description: Signed URL for accessing the resume
+   *         coverLetter:
+   *           type: string
+   *           description: Applicant's cover letter
+   *         questionAnswers:
+   *           type: array
+   *           items:
+   *             type: object
+   *             properties:
+   *               question:
+   *                 type: string
+   *               answer:
+   *                 type: string
+   *         applicationDate:
+   *           type: string
+   *           format: date-time
+   *           description: Date when the application was submitted
+   *         createdAt:
+   *           type: string
+   *           format: date-time
+   *         updatedAt:
+   *           type: string
+   *           format: date-time
+   *     Pagination:
+   *       type: object
+   *       properties:
+   *         total:
+   *           type: integer
+   *           description: Total number of items
+   *         page:
+   *           type: integer
+   *           description: Current page number
+   *         limit:
+   *           type: integer
+   *           description: Number of items per page
+   *         totalPages:
+   *           type: integer
+   *           description: Total number of pages
+   *   responses:
+   *     Error400:
+   *       description: Bad Request
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: boolean
+   *                 example: false
+   *               message:
+   *                 type: string
+   *                 example: Invalid request parameters
+   *     Error404:
+   *       description: Not Found
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: boolean
+   *                 example: false
+   *               message:
+   *                 type: string
+   *                 example: Resource not found
+   */
+
+  /**
+   * @swagger
    * /api/v1/application/submit-application:
    *   post:
-   *     summary: Submit a new job application
+   *     summary: Submit job application
    *     description: |
-   *       Submits a new job application with applicant details and answers to job-specific questions.
-   *       ${getCommandDetails('Post')}
+   *       Submits a new job application.
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
-   *       ${getExampleRequest({
+   *       ${formatExampleRequest({
+   *         jobId: "job123",
    *         firstName: "John",
    *         lastName: "Doe",
-   *         email: "john@example.com",
-   *         phone: "+1234567890",
-   *         jobId: "job123",
-   *         answers: [{
-   *           questionId: "q1",
-   *           answer: "I have 5 years of experience in web development"
-   *         }]
+   *         email: "john.doe@example.com",
+   *         phoneNumber: "+1234567890",
+   *         coverLetter: "I am excited to apply for this position...",
+   *         questionAnswers: [
+   *           {
+   *             questionId: "q1",
+   *             answer: "My answer to question 1"
+   *           }
+   *         ]
    *       })}
    *       
-   *       ${getExampleResponse({
-   *         status: true,
-   *         id: "app123"
+   *       ${formatExampleResponse({
+   *         id: "app123",
+   *         jobId: "job123",
+   *         firstName: "John",
+   *         lastName: "Doe",
+   *         email: "john.doe@example.com",
+   *         phoneNumber: "+1234567890",
+   *         coverLetter: "I am excited to apply for this position...",
+   *         questionAnswers: [
+   *           {
+   *             questionId: "q1",
+   *             answer: "My answer to question 1"
+   *           }
+   *         ],
+   *         status: "pending",
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
    *     tags: [Applications]
    *     requestBody:
@@ -36,19 +155,43 @@ export const applicationSwagger = {
    *       content:
    *         application/json:
    *           schema:
-   *             $ref: '#/components/schemas/Application'
+   *             type: object
+   *             required:
+   *               - jobId
+   *               - firstName
+   *               - lastName
+   *               - email
+   *               - phoneNumber
+   *             properties:
+   *               jobId:
+   *                 type: string
+   *               firstName:
+   *                 type: string
+   *               lastName:
+   *                 type: string
+   *               email:
+   *                 type: string
+   *                 format: email
+   *               phoneNumber:
+   *                 type: string
+   *               coverLetter:
+   *                 type: string
+   *               questionAnswers:
+   *                 type: array
+   *                 items:
+   *                   type: object
+   *                   properties:
+   *                     questionId:
+   *                       type: string
+   *                     answer:
+   *                       type: string
    *     responses:
    *       201:
    *         description: Application submitted successfully
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: boolean
-   *                 id:
-   *                   type: string
+   *               $ref: '#/components/schemas/Application'
    *       400:
    *         $ref: '#/components/responses/Error400'
    */
@@ -59,22 +202,26 @@ export const applicationSwagger = {
    *   get:
    *     summary: Get application by ID
    *     description: |
-   *       Retrieves a specific job application by its ID.
-   *       ${getCommandDetails('Get')}
+   *       Retrieves a specific application by its ID.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         id: "app123",
+   *         jobId: "job123",
    *         firstName: "John",
    *         lastName: "Doe",
-   *         email: "john@example.com",
-   *         phone: "+1234567890",
-   *         jobId: "job123",
+   *         email: "john.doe@example.com",
+   *         phoneNumber: "+1234567890",
+   *         coverLetter: "I am excited to apply for this position...",
+   *         questionAnswers: [
+   *           {
+   *             questionId: "q1",
+   *             answer: "My answer to question 1"
+   *           }
+   *         ],
    *         status: "pending",
-   *         answers: [{
-   *           questionId: "q1",
-   *           answer: "I have 5 years of experience in web development"
-   *         }],
-   *         createdAt: "2024-03-20T10:00:00Z"
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
    *     tags: [Applications]
    *     parameters:
@@ -86,7 +233,7 @@ export const applicationSwagger = {
    *         description: Application ID
    *     responses:
    *       200:
-   *         description: Application details
+   *         description: Application details retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -110,7 +257,7 @@ export const applicationSwagger = {
    *       ```
    *       
    *       ${getExampleResponse({
-   *         data: [{
+   *         applications: [{
    *           id: "app123",
    *           firstName: "John",
    *           lastName: "Doe",
@@ -118,12 +265,10 @@ export const applicationSwagger = {
    *           status: "pending",
    *           jobId: "job123"
    *         }],
-   *         pagination: {
-   *           total: 100,
-   *           page: 1,
-   *           limit: 10,
-   *           totalPages: 10
-   *         }
+   *         total: 100,
+   *         page: 1,
+   *         limit: 10,
+   *         totalPages: 10
    *       })}
    *     tags: [Applications]
    *     parameters:
@@ -131,7 +276,7 @@ export const applicationSwagger = {
    *         name: filters[status]
    *         schema:
    *           type: string
-   *           enum: [pending, reviewed, shortlisted, rejected]
+   *           enum: [pending, reviewed, shortlisted, rejected, accepted]
    *         description: Filter by application status
    *       - in: query
    *         name: filters[search]
@@ -161,12 +306,18 @@ export const applicationSwagger = {
    *             schema:
    *               type: object
    *               properties:
-   *                 data:
+   *                 applications:
    *                   type: array
    *                   items:
    *                     $ref: '#/components/schemas/Application'
-   *                 pagination:
-   *                   $ref: '#/components/schemas/Pagination'
+   *                 total:
+   *                   type: integer
+   *                 page:
+   *                   type: integer
+   *                 limit:
+   *                   type: integer
+   *                 totalPages:
+   *                   type: integer
    *       400:
    *         $ref: '#/components/responses/Error400'
    */
@@ -177,17 +328,17 @@ export const applicationSwagger = {
    *   put:
    *     summary: Update application status
    *     description: |
-   *       Updates the status of a job application.
-   *       ${getCommandDetails('Put')}
+   *       Updates the status of an application (Admin only).
+   *       ${formatCommandDetails(commonCommandDetails.Put)}
    *       
-   *       ${getExampleRequest({
-   *         status: "shortlisted"
+   *       ${formatExampleRequest({
+   *         status: "reviewed"
    *       })}
    *       
-   *       ${getExampleResponse({
+   *       ${formatExampleResponse({
    *         id: "app123",
-   *         status: "shortlisted",
-   *         updatedAt: "2024-03-20T10:00:00Z"
+   *         status: "reviewed",
+   *         updatedAt: "2024-03-20T11:00:00Z"
    *       })}
    *     tags: [Applications]
    *     security:
@@ -213,7 +364,7 @@ export const applicationSwagger = {
    *                 enum: [pending, reviewed, shortlisted, rejected]
    *     responses:
    *       200:
-   *         description: Status updated successfully
+   *         description: Application status updated successfully
    *         content:
    *           application/json:
    *             schema:
@@ -222,7 +373,57 @@ export const applicationSwagger = {
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Admin access required
    *       404:
    *         $ref: '#/components/responses/Error404'
+   */
+
+  /**
+   * @swagger
+   * /api/v1/application/upload-resume:
+   *   post:
+   *     summary: Upload resume file
+   *     description: |
+   *       Uploads a resume file for a job application.
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
+   *       
+   *       ${formatExampleResponse({
+   *         key: "resume/abc123.pdf",
+   *         originalFilename: "resume.pdf",
+   *         size: 1024000,
+   *         mimeType: "application/pdf"
+   *       })}
+   *     tags: [Applications]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         multipart/form-data:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - file
+   *             properties:
+   *               file:
+   *                 type: string
+   *                 format: binary
+   *     responses:
+   *       200:
+   *         description: Resume uploaded successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 key:
+   *                   type: string
+   *                 originalFilename:
+   *                   type: string
+   *                 size:
+   *                   type: number
+   *                 mimeType:
+   *                   type: string
+   *       400:
+   *         $ref: '#/components/responses/Error400'
    */
 }; 

@@ -9,9 +9,9 @@ const options: swaggerJSDoc.Options = {
       description: 'API Documentation',
     },
     servers: [
-    //   {
-    //     url: 'http://localhost:3000/',
-    //   },
+      {
+        url: 'http://localhost:3000/',
+      },
       {
         url: 'http://3.109.123.217',
         description: 'Production Server'

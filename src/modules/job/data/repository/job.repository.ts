@@ -13,7 +13,7 @@ interface PaginationOptions {
 interface JobFilters {
   status?: 'open' | 'closed' | 'paused';
   jobType?: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance';
-  remote?: boolean;
+  workLocation?: 'remote' | 'onsite' | 'hybrid';
   search?: string;
 }
 
@@ -48,26 +48,32 @@ async function getJobsWithPagination(
   const skip = (page - 1) * limit;
 
   // Build filter query
-  const query: any = {};
+  const query: any = { isDeleted: false };
   
+  // Add status filter
   if (filters.status) {
     query.status = filters.status;
   }
   
+  // Add job type filter
   if (filters.jobType) {
     query.jobType = filters.jobType;
   }
   
-  if (filters.remote !== undefined) {
-    query.remote = filters.remote;
+  // Add work location filter
+  if (filters.workLocation) {
+    query.workLocation = filters.workLocation;
   }
   
+  // Add search filter
   if (filters.search) {
     query.$or = [
       { title: { $regex: filters.search, $options: 'i' } },
       { description: { $regex: filters.search, $options: 'i' } }
     ];
   }
+
+  console.log('Query:', JSON.stringify(query, null, 2));
 
   // Get total count for pagination
   const total = await JobDto.countDocuments(query);
@@ -77,7 +83,10 @@ async function getJobsWithPagination(
   const jobs = await JobDto.find(query)
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
+
+  console.log('Found jobs:', jobs.length);
 
   return {
     jobs,

@@ -1,23 +1,87 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Application } from 'express';
+import { userSwagger } from '../modules/user/swagger/user.swagger';
+import { authSwagger } from '../modules/auth/swagger/auth.swagger';
+import { jobSwagger } from '../modules/job/swagger/job.swagger';
+import { applicationSwagger } from '../modules/application/swagger/application.swagger';
+import { questionSwagger } from '../modules/question/swagger/question.swagger';
 
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Job Application API',
+      title: 'Job Vacancy API',
       version: '1.0.0',
-      description: 'API documentation for the Job Application system',
+      description: 'API documentation for the Job Vacancy application'
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Development server',
+        description: 'Development server'
+      }
+    ],
+    tags: [
+      {
+        name: 'Authentication',
+        description: 'Authentication related endpoints'
       },
+      {
+        name: 'Users',
+        description: 'User management endpoints'
+      },
+      {
+        name: 'Jobs',
+        description: 'Job management endpoints'
+      },
+      {
+        name: 'Applications',
+        description: 'Job application endpoints'
+      },
+      {
+        name: 'Questions',
+        description: 'Job questions endpoints'
+      }
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      },
       schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string'
+            },
+            email: {
+              type: 'string',
+              format: 'email'
+            },
+            firstName: {
+              type: 'string'
+            },
+            lastName: {
+              type: 'string'
+            },
+            role: {
+              type: 'string',
+              enum: ['user', 'admin']
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
         Application: {
           type: 'object',
           required: ['firstName', 'lastName', 'email', 'phone', 'jobId'],
@@ -67,7 +131,46 @@ const options: swaggerJsdoc.Options = {
             }
           }
         }
+      },
+      responses: {
+        Error400: {
+          description: 'Bad Request',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
+        },
+        Error404: {
+          description: 'Not Found',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
+        }
       }
+    },
+    paths: {
+      ...userSwagger,
+      ...authSwagger,
+      ...jobSwagger,
+      ...applicationSwagger,
+      ...questionSwagger
     }
   },
   apis: ['./src/modules/**/*.ts'], // Path to the API docs

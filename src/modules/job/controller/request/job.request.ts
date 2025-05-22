@@ -37,8 +37,9 @@ const saveJobSchema = z.object({
     .string({ required_error: 'Application deadline is required' })
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, { message: 'Deadline must be in DD/MM/YYYY format' }),
 
-  // Optional fields (e.g., company logo, remote flag)
-  remote: z.boolean().default(false),
+  workLocation: z.enum(['remote', 'onsite', 'hybrid'], {
+    required_error: 'Work location type is required',
+  }).default('onsite'),
 });
 
 export type SaveJobRequest = z.infer<typeof saveJobSchema>;

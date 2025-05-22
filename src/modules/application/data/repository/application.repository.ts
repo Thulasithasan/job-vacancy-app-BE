@@ -9,6 +9,7 @@ interface PaginationOptions {
 interface ApplicationFilters {
   jobId?: string;
   status?: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
+  search?: string;
 }
 
 async function getApplicationById(id: string): Promise<ApplicationModel | null> {
@@ -24,15 +25,28 @@ async function getApplicationsWithPagination(
   const skip = (page - 1) * limit;
 
   // Build filter query
-  const query: any = {};
+  const query: any = { isDeleted: false };
   
+  // Add job ID filter
   if (filters.jobId) {
     query.jobId = filters.jobId;
   }
   
+  // Add status filter
   if (filters.status) {
     query.status = filters.status;
   }
+
+  // Add search filter
+  if (filters.search) {
+    query.$or = [
+      { firstName: { $regex: filters.search, $options: 'i' } },
+      { lastName: { $regex: filters.search, $options: 'i' } },
+      { email: { $regex: filters.search, $options: 'i' } }
+    ];
+  }
+
+  console.log('Query:', JSON.stringify(query, null, 2));
 
   // Get total count for pagination
   const total = await ApplicationDto.countDocuments(query);
@@ -43,7 +57,10 @@ async function getApplicationsWithPagination(
     .populate('jobId')
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
+
+  console.log('Found applications:', applications.length);
 
   return {
     applications,

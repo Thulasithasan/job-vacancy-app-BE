@@ -3,7 +3,7 @@ import { BaseModel } from '../../../base/data/dtos/baseModel';
 
 export interface JobModel extends BaseModel {
   title: string;
-  remote?: boolean;
+  workLocation: 'remote' | 'onsite' | 'hybrid';
   status: 'open' | 'closed' | 'paused';
   jobType: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance';
   description: string;
@@ -17,7 +17,12 @@ export interface JobModel extends BaseModel {
 const JobSchema = new Schema<JobModel>(
   {
     title: { type: String, required: true, trim: true },
-    remote: { type: Boolean, default: false },
+    workLocation: {
+      type: String,
+      enum: ['remote', 'onsite', 'hybrid'],
+      required: true,
+      default: 'onsite'
+    },
     status: {
       type: String,
       enum: ['open', 'closed', 'paused'],

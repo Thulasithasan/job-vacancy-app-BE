@@ -44,10 +44,26 @@ export const updateJobStatus = async (req: Request, res: Response) => {
 
 export const getJobsWithPagination = async (req: Request, res: Response) => {
   try {
-    const { filters, pagination } = req.body;
-    const response = await jobService.getJobsWithPagination(filters, pagination);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    
+    // Extract filters from query parameters
+    const filters = {
+      status: req.query.status as 'open' | 'closed' | 'paused' | undefined,
+      jobType: req.query.type as 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance' | undefined,
+      workLocation: req.query.workLocation as 'remote' | 'onsite' | 'hybrid' | undefined,
+      search: req.query.search as string | undefined
+    };
+
+    console.log('Request filters:', filters);
+
+    const response = await jobService.getJobsWithPagination(
+      filters,
+      { page, limit }
+    );
     res.status(200).json(response);
   } catch (error: any) {
+    console.error('Error in getJobsWithPagination:', error);
     res.status(400).json(errorResponse(error.message));
   }
 };  
