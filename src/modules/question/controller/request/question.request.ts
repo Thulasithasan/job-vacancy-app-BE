@@ -13,13 +13,11 @@ export const saveAnswerSchema = z.object({
  * Schema for saving a question along with its answers
  */
 export const saveQuestionWithAnswersSchema = z.object({
-  jobId: z.string({ required_error: 'Job ID is required' }),
-
   questionText: z
     .string({ required_error: 'Question text is required' })
     .min(5, { message: 'Question must be at least 5 characters' })
     .max(500, { message: 'Question must be under 500 characters' }),
-
+  jobId: z.string().optional(),
   answers: z
     .array(saveAnswerSchema)
     .min(1, { message: 'At least one answer is required' }),

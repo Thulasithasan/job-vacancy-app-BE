@@ -11,24 +11,26 @@ export const questionSwagger = {
    *   post:
    *     summary: Create new question
    *     description: |
-   *       Creates a new question for job applications (Admin only).
+   *       Creates a new question that can be used in job applications.
    *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
    *       ${formatExampleRequest({
-   *         text: "What is your experience with TypeScript?",
-   *         type: "text",
-   *         required: true,
-   *         order: 1,
-   *         status: "active"
+   *         questionText: "What is your experience with Node.js?",
+   *         answers: [
+   *           { answerText: "Beginner" },
+   *           { answerText: "Intermediate" },
+   *           { answerText: "Expert" }
+   *         ]
    *       })}
    *       
    *       ${formatExampleResponse({
-   *         id: "q1",
-   *         text: "What is your experience with TypeScript?",
-   *         type: "text",
-   *         required: true,
-   *         order: 1,
-   *         status: "active",
+   *         id: "question123",
+   *         questionText: "What is your experience with Node.js?",
+   *         answers: [
+   *           { answerText: "Beginner", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Intermediate", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Expert", createdAt: "2024-03-20T10:00:00Z" }
+   *         ],
    *         createdAt: "2024-03-20T10:00:00Z",
    *         updatedAt: "2024-03-20T10:00:00Z"
    *       })}
@@ -42,27 +44,25 @@ export const questionSwagger = {
    *           schema:
    *             type: object
    *             required:
-   *               - text
-   *               - type
-   *               - required
-   *               - order
+   *               - questionText
+   *               - answers
    *             properties:
-   *               text:
+   *               questionText:
    *                 type: string
-   *               type:
-   *                 type: string
-   *                 enum: [text, multiple-choice, single-choice]
-   *               required:
-   *                 type: boolean
-   *               order:
-   *                 type: integer
-   *               options:
+   *                 maxLength: 200
+   *                 description: The question text
+   *               answers:
    *                 type: array
+   *                 minItems: 1
    *                 items:
-   *                   type: string
-   *               status:
-   *                 type: string
-   *                 enum: [active, inactive]
+   *                   type: object
+   *                   required:
+   *                     - answerText
+   *                   properties:
+   *                     answerText:
+   *                       type: string
+   *                       maxLength: 500
+   *                       description: The answer text
    *     responses:
    *       201:
    *         description: Question created successfully
@@ -74,39 +74,59 @@ export const questionSwagger = {
    *         $ref: '#/components/responses/Error400'
    *       401:
    *         description: Unauthorized
-   *       403:
-   *         description: Forbidden - Admin access required
    */
 
   /**
    * @swagger
-   * /api/v1/question/get-questions/{jobId}:
+   * /api/v1/question/get-questions:
    *   get:
-   *     summary: Get questions by job ID
+   *     summary: Get questions with pagination
    *     description: |
-   *       Retrieves all questions for a specific job.
+   *       Retrieves a paginated list of questions with optional filtering.
    *       ${formatCommandDetails(commonCommandDetails.Get)}
    *       
    *       ${formatExampleResponse({
    *         questions: [
    *           {
-   *             id: "q1",
-   *             text: "What is your experience with TypeScript?",
-   *             type: "text",
-   *             required: true,
-   *             order: 1,
-   *             status: "active"
+   *             id: "question123",
+   *             questionText: "What is your experience with Node.js?",
+   *             answers: [
+   *               { answerText: "Beginner", createdAt: "2024-03-20T10:00:00Z" },
+   *               { answerText: "Intermediate", createdAt: "2024-03-20T10:00:00Z" },
+   *               { answerText: "Expert", createdAt: "2024-03-20T10:00:00Z" }
+   *             ],
+   *             createdAt: "2024-03-20T10:00:00Z",
+   *             updatedAt: "2024-03-20T10:00:00Z"
    *           }
-   *         ]
+   *         ],
+   *         total: 1,
+   *         page: 1,
+   *         totalPages: 1
    *       })}
    *     tags: [Questions]
    *     parameters:
-   *       - in: path
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *         description: Page number
+   *       - in: query
+   *         name: limit
+   *         schema:
+   *           type: integer
+   *           default: 10
+   *         description: Number of items per page
+   *       - in: query
    *         name: jobId
-   *         required: true
    *         schema:
    *           type: string
-   *         description: Job ID
+   *         description: Filter questions by job ID
+   *       - in: query
+   *         name: search
+   *         schema:
+   *           type: string
+   *         description: Search in question text
    *     responses:
    *       200:
    *         description: Questions retrieved successfully
@@ -119,37 +139,84 @@ export const questionSwagger = {
    *                   type: array
    *                   items:
    *                     $ref: '#/components/schemas/Question'
+   *                 total:
+   *                   type: number
+   *                 page:
+   *                   type: number
+   *                 totalPages:
+   *                   type: number
+   */
+
+  /**
+   * @swagger
+   * /api/v1/question/get-question/{id}:
+   *   get:
+   *     summary: Get question by ID
+   *     description: |
+   *       Retrieves a specific question by its ID.
+   *       ${formatCommandDetails(commonCommandDetails.Get)}
+   *       
+   *       ${formatExampleResponse({
+   *         id: "question123",
+   *         questionText: "What is your experience with Node.js?",
+   *         answers: [
+   *           { answerText: "Beginner", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Intermediate", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Expert", createdAt: "2024-03-20T10:00:00Z" }
+   *         ],
+   *         createdAt: "2024-03-20T10:00:00Z",
+   *         updatedAt: "2024-03-20T10:00:00Z"
+   *       })}
+   *     tags: [Questions]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: Question ID
+   *     responses:
+   *       200:
+   *         description: Question details retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Question'
    *       404:
    *         $ref: '#/components/responses/Error404'
    */
 
   /**
    * @swagger
-   * /api/v1/question/add-answer/{questionId}:
-   *   put:
+   * /api/v1/question/add-answer/{id}:
+   *   post:
    *     summary: Add answer to question
    *     description: |
-   *       Adds an answer to a specific question.
-   *       ${formatCommandDetails(commonCommandDetails.Put)}
+   *       Adds a new answer to an existing question.
+   *       ${formatCommandDetails(commonCommandDetails.Post)}
    *       
    *       ${formatExampleRequest({
-   *         answer: "I have 5 years of experience with TypeScript"
+   *         answerText: "Advanced"
    *       })}
    *       
    *       ${formatExampleResponse({
-   *         id: "q1",
-   *         text: "What is your experience with TypeScript?",
-   *         type: "text",
-   *         required: true,
-   *         order: 1,
-   *         status: "active",
-   *         answer: "I have 5 years of experience with TypeScript",
+   *         id: "question123",
+   *         questionText: "What is your experience with Node.js?",
+   *         answers: [
+   *           { answerText: "Beginner", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Intermediate", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Expert", createdAt: "2024-03-20T10:00:00Z" },
+   *           { answerText: "Advanced", createdAt: "2024-03-20T11:00:00Z" }
+   *         ],
+   *         createdAt: "2024-03-20T10:00:00Z",
    *         updatedAt: "2024-03-20T11:00:00Z"
    *       })}
    *     tags: [Questions]
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
-   *         name: questionId
+   *         name: id
    *         required: true
    *         schema:
    *           type: string
@@ -161,10 +228,12 @@ export const questionSwagger = {
    *           schema:
    *             type: object
    *             required:
-   *               - answer
+   *               - answerText
    *             properties:
-   *               answer:
+   *               answerText:
    *                 type: string
+   *                 maxLength: 500
+   *                 description: The answer text
    *     responses:
    *       200:
    *         description: Answer added successfully
@@ -174,6 +243,8 @@ export const questionSwagger = {
    *               $ref: '#/components/schemas/Question'
    *       400:
    *         $ref: '#/components/responses/Error400'
+   *       401:
+   *         description: Unauthorized
    *       404:
    *         $ref: '#/components/responses/Error404'
    */
@@ -184,13 +255,8 @@ export const questionSwagger = {
    *   delete:
    *     summary: Delete question
    *     description: |
-   *       Soft deletes a question (Admin only).
+   *       Soft deletes a question by setting isDeleted flag.
    *       ${formatCommandDetails(commonCommandDetails.Delete)}
-   *       
-   *       ${formatExampleResponse({
-   *         status: true,
-   *         message: "Question deleted successfully"
-   *       })}
    *     tags: [Questions]
    *     security:
    *       - bearerAuth: []
@@ -204,19 +270,8 @@ export const questionSwagger = {
    *     responses:
    *       200:
    *         description: Question deleted successfully
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: boolean
-   *                 message:
-   *                   type: string
    *       401:
    *         description: Unauthorized
-   *       403:
-   *         description: Forbidden - Admin access required
    *       404:
    *         $ref: '#/components/responses/Error404'
    */

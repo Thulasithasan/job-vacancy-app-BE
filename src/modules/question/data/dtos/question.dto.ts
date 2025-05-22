@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema, model, Types } from 'mongoose';
 import { BaseModel } from '../../../base/data/dtos/baseModel';
 
 export interface Answer {
@@ -7,9 +7,9 @@ export interface Answer {
 }
 
 export interface QuestionModel extends BaseModel {
-  jobId: mongoose.Types.ObjectId; // <-- Use mongoose.Types.ObjectId
   questionText: string;
   answers: Answer[];
+  jobId?: Types.ObjectId;
 }
 
 const AnswerSchema = new Schema<Answer>({
@@ -19,18 +19,17 @@ const AnswerSchema = new Schema<Answer>({
 
 const QuestionSchema = new Schema<QuestionModel>(
   {
-    jobId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Job',
-      required: true,
-      index: true,
-    },
     questionText: {
       type: String,
       required: true,
       trim: true,
     },
     answers: [AnswerSchema],
+    jobId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Job',
+      required: false
+    },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
@@ -40,7 +39,6 @@ export const QuestionDto = model<QuestionModel>('Question', QuestionSchema);
 
 export interface QuestionResponse {
   _id: string;
-  jobId: string;
   questionText: string;
   answers: {
     answerText: string;

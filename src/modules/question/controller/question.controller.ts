@@ -16,6 +16,21 @@ export const createQuestion = async (req: Request, res: Response) => {
   }
 };
 
+// Get questions with pagination
+export const getQuestionsWithPagination = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const jobId = req.query.jobId as string;
+    const search = req.query.search as string;
+
+    const result = await questionService.getQuestionsWithPagination(page, limit, { jobId, search });
+    res.status(200).json(result);
+  } catch (error: any) {
+    res.status(400).json(errorResponse(error.message));
+  }
+};
+
 // Get a question by ID
 export const getQuestionById = async (req: Request, res: Response) => {
   try {

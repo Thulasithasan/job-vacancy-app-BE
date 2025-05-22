@@ -4,6 +4,7 @@ import { assetAppRouter } from '@/modules/asset/routes';
 import roleRouter from '@/modules/user/routes/app/v1/role.route';
 import jobRouter from '@/modules/job/routes/app/v1/job.route';
 import applicationRouter from '@/modules/application/routes/app/v1/application.route';
+import questionRouter from '@/modules/question/routes/question.routes';
 
 const appRouter: Router = Router();
 
@@ -14,5 +15,6 @@ appRouter.use('/v1/assets', assetAppRouter);
 appRouter.use('/v1/role', roleRouter);
 appRouter.use('/v1/job', jobRouter);
 appRouter.use('/v1/application', applicationRouter);
+appRouter.use('/v1/question', questionRouter);
 
 export default appRouter;

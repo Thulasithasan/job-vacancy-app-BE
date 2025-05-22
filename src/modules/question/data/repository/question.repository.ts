@@ -44,6 +44,44 @@ async function getQuestionsByJobId(jobId: string): Promise<QuestionModel[]> {
     .exec();
 }
 
+// Get questions with pagination and filtering
+async function getQuestionsWithPagination(
+  page: number = 1,
+  limit: number = 10,
+  filters: {
+    jobId?: string;
+    search?: string;
+  } = {}
+): Promise<{ questions: QuestionModel[]; total: number; page: number; totalPages: number }> {
+  const query: any = { isDeleted: false };
+
+  if (filters.jobId) {
+    query.jobId = new mongoose.Types.ObjectId(filters.jobId);
+  }
+
+  if (filters.search) {
+    query.questionText = { $regex: filters.search, $options: 'i' };
+  }
+
+  const skip = (page - 1) * limit;
+  
+  const [questions, total] = await Promise.all([
+    QuestionDto.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    QuestionDto.countDocuments(query)
+  ]);
+
+  return {
+    questions,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit)
+  };
+}
+
 // Soft delete a question by setting isDeleted flag
 async function deleteQuestion(id: string): Promise<void> {
   await QuestionDto.findByIdAndUpdate(id, { isDeleted: true });
@@ -54,5 +92,6 @@ export default {
   getQuestionById,
   addAnswerToQuestion,
   getQuestionsByJobId,
+  getQuestionsWithPagination,
   deleteQuestion,
 };
