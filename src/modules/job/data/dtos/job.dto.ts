@@ -1,6 +1,14 @@
 import mongoose, { Schema, model, ObjectId } from 'mongoose';
 import { BaseModel } from '../../../base/data/dtos/baseModel';
 
+export interface JobQuestion {
+  questionText: string;
+  answers: {
+    answerText: string;
+    createdAt: Date;
+  }[];
+}
+
 export interface JobModel extends BaseModel {
   title: string;
   workLocation: 'remote' | 'onsite' | 'hybrid';
@@ -12,7 +20,20 @@ export interface JobModel extends BaseModel {
   postedDate: Date;
   applicationDeadline: Date;
   createdBy: ObjectId; // ref to User or Company model
+  questions: JobQuestion[];
 }
+
+const JobQuestionSchema = new Schema<JobQuestion>({
+  questionText: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  answers: [{
+    answerText: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+  }]
+});
 
 const JobSchema = new Schema<JobModel>(
   {
@@ -45,6 +66,7 @@ const JobSchema = new Schema<JobModel>(
       required: true,
       index: true,
     },
+    questions: [JobQuestionSchema],
     isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }

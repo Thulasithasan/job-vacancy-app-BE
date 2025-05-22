@@ -3,6 +3,7 @@ import QuestionRepository from '../data/repository/question.repository';
 import { SaveQuestionRequest, AddAnswerRequest } from '../controller/request/question.request';
 import { QuestionModel } from '../data/dtos/question.dto';
 import mongoose from 'mongoose';
+
 const createQuestion = async (payload: SaveQuestionRequest): Promise<CreatedUpdatedResponse> => {
   const questionData: Partial<QuestionModel> = {
     jobId: new mongoose.Types.ObjectId(payload.jobId),
@@ -41,8 +42,20 @@ const deleteQuestion = async (id: string): Promise<void> => {
   await QuestionRepository.deleteQuestion(id);
 };
 
+const getQuestionsWithPagination = async (
+  page: number = 1,
+  limit: number = 10,
+  filters: {
+    jobId?: string;
+    search?: string;
+  } = {}
+): Promise<{ questions: QuestionModel[]; total: number; page: number; totalPages: number }> => {
+  return await QuestionRepository.getQuestionsWithPagination(page, limit, filters);
+};
+
 export default {
   createQuestion,
+  getQuestionsWithPagination,
   getQuestionById,
   addAnswerToQuestion,
   getQuestionsByJobId,
