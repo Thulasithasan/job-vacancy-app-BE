@@ -105,8 +105,8 @@ export const submitApplication = async (req: Request, res: Response) => {
 
 export const updateApplicationStatus = async (req: Request, res: Response) => {
   try {
-    const { id, status } = req.body;
-    const response = await applicationService.updateApplicationStatus(id, status);
+    const { status } = req.body;
+    const response = await applicationService.updateApplicationStatus(req.params.id, status);
     res.status(200).json(response);
   } catch (error: any) {
     res.status(400).json(errorResponse(error.message));
