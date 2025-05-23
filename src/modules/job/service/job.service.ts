@@ -36,23 +36,17 @@ const updateJobStatus = async (id: string, status: 'open' | 'closed' | 'paused')
   return await jobRepository.updateJobStatus(id, status);
 };
 
-interface PaginationOptions {
-  page: number;
-  limit: number;
-}
-
-interface JobFilters {
-  status?: 'open' | 'closed' | 'paused';
-  jobType?: 'full-time' | 'part-time' | 'contract' | 'internship' | 'freelance';
-  remote?: boolean;
-  search?: string;
-}
-
 const getJobsWithPagination = async (
-  filters: JobFilters = {},
-  pagination: PaginationOptions = { page: 1, limit: 10 }
-) => {
-  return await jobRepository.getJobsWithPagination(filters, pagination);
+  page: number = 1,
+  limit: number = 10,
+  filters: {
+    jobType?: string;
+    workLocation?: string;
+    status?: string;
+    search?: string;
+  } = {}
+): Promise<{ jobs: JobModel[]; total: number; page: number; totalPages: number }> => {
+  return await jobRepository.getJobsWithPagination(page, limit, filters);
 };
 
 export default {

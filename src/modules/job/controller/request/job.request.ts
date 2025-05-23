@@ -15,6 +15,12 @@ const jobQuestionSchema = z.object({
     .min(1, { message: 'At least one answer is required' })
 });
 
+// Helper function to convert DD/MM/YYYY to Date
+const convertToDate = (dateStr: string) => {
+  const [day, month, year] = dateStr.split('/');
+  return new Date(`${year}-${month}-${day}`);
+};
+
 const saveJobSchema = z.object({
   title: z
     .string({ required_error: 'Job title is required' })
@@ -46,11 +52,13 @@ const saveJobSchema = z.object({
 
   postedDate: z
     .string({ required_error: 'Posted date is required' })
-    .regex(/^\d{2}\/\d{2}\/\d{4}$/, { message: 'Posted date must be in DD/MM/YYYY format' }),
+    .regex(/^\d{2}\/\d{2}\/\d{4}$/, { message: 'Posted date must be in DD/MM/YYYY format' })
+    .transform(convertToDate),
 
   applicationDeadline: z
     .string({ required_error: 'Application deadline is required' })
-    .regex(/^\d{2}\/\d{2}\/\d{4}$/, { message: 'Deadline must be in DD/MM/YYYY format' }),
+    .regex(/^\d{2}\/\d{2}\/\d{4}$/, { message: 'Deadline must be in DD/MM/YYYY format' })
+    .transform(convertToDate),
 
   workLocation: z.enum(['remote', 'onsite', 'hybrid'], {
     required_error: 'Work location type is required',
@@ -63,8 +71,12 @@ const saveJobSchema = z.object({
     .min(1, { message: 'Created by user ID must be provided' }),
 });
 
+const updateJobSchema = saveJobSchema.partial();
+
 export type SaveJobRequest = z.infer<typeof saveJobSchema>;
+export type UpdateJobRequest = z.infer<typeof updateJobSchema>;
 
 export default {
   saveJobSchema,
+  updateJobSchema,
 };
