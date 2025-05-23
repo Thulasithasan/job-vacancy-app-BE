@@ -7,10 +7,10 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // AWS S3 Configuration
 const s3Client = new S3Client({
-  region: 'ap-south-1',
+  region: process.env.AWS_REGION || 'ap-south-1',
   credentials: {
-    accessKeyId: 'AKIAT4YQK3SDH6SOYZWT',
-    secretAccessKey: '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'
+    accessKeyId: process.env.AWS_ACCESS_KEY || '',
+    secretAccessKey: process.env.AWS_SECRET_KEY || ''
   }
 });
 
@@ -60,14 +60,14 @@ export const uploadToS3 = async (file: Express.Multer.File): Promise<string> => 
 };
 
 // Function to get signed URL for file access
-export const getResumeUrl = async (key: string): Promise<string> => {
+export const getResumeUrl = async (key: string, expiresIn: number = 3600): Promise<string> => {
   const command = new GetObjectCommand({
     Bucket: BUCKET_NAME,
     Key: key,
   });
 
-  // URL expires in 1 hour
-  return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  // URL expires in specified seconds (default 1 hour)
+  return await getSignedUrl(s3Client, command, { expiresIn });
 };
 
 // Middleware to handle upload errors and attach file info to request
@@ -118,3 +118,4 @@ declare global {
     }
   }
 }
+

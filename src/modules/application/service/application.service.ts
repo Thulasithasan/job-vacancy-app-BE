@@ -11,6 +11,7 @@ interface PaginationOptions {
 interface ApplicationFilters {
   jobId?: string;
   status?: 'pending' | 'reviewed' | 'shortlisted' | 'rejected' | 'accepted';
+  search?: string;
 }
 
 const getApplicationById = async (id: string): Promise<ApplicationResponse | null> => {
@@ -30,10 +31,10 @@ const getApplicationById = async (id: string): Promise<ApplicationResponse | nul
     jobId: applicationData.jobId
   };
   
-  // Generate signed URL if resume exists
+  // Generate new signed URL with 30 minutes expiry if resume exists
   if (applicationData.resume) {
     try {
-      const resumeSignedUrl = await getResumeUrl(applicationData.resume);
+      const resumeSignedUrl = await getResumeUrl(applicationData.resume, 1800); // 1800 seconds = 30 minutes
       applicationResponse.resumeSignedUrl = resumeSignedUrl;
     } catch (error) {
       console.error('Error generating resume URL:', error);
