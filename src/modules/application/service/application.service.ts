@@ -76,9 +76,45 @@ const updateApplicationStatus = async (id: string, status: string): Promise<Appl
   return await applicationRepository.updateApplicationStatus(id, status);
 };
 
+const saveMeetingDetails = async ({
+  applicationId,
+  eventId,
+  meetingLink,
+  start,
+  end,
+  summary,
+  description,
+  attendees
+}: {
+  applicationId: string;
+  eventId: string;
+  meetingLink: string;
+  start: string;
+  end: string;
+  summary: string;
+  description: string;
+  attendees: { email: string }[];
+}): Promise<ApplicationModel | null> => {
+  const updatedApplication = await applicationRepository.updateApplication(applicationId, {
+    meeting: {
+      eventId,
+      link: meetingLink,
+      start,
+      end,
+      summary,
+      description,
+      attendees: attendees.map(attendee => attendee.email)
+    },
+  });
+
+  return updatedApplication;
+};
+
+
 export default {
   getApplicationById,
   getApplicationsWithPagination,
   submitApplication,
-  updateApplicationStatus
+  updateApplicationStatus,
+  saveMeetingDetails
 }; 

@@ -85,9 +85,15 @@ async function updateApplicationStatus(id: string, status: string): Promise<Appl
   return await ApplicationDto.findByIdAndUpdate(id, { status }, { new: true });
 }
 
+const updateApplication = async (id: string, update: Partial<ApplicationModel>) => {
+  return await ApplicationDto.findByIdAndUpdate(id, update, { new: true });
+};
+
+
 export default {
   getApplicationById,
   getApplicationsWithPagination,
   submitApplication,
-  updateApplicationStatus
+  updateApplicationStatus,
+  updateApplication
 }; 

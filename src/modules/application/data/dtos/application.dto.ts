@@ -6,6 +6,16 @@ interface QuestionAnswer {
   answer: string;
 }
 
+export interface MeetingDetails {
+  eventId: string;
+  link: string;
+  start: string;
+  end: string;
+  summary: string;
+  description: string;
+  attendees: string[];
+}
+
 export interface ApplicationModel extends Document {
   jobId: ObjectId;
   firstName: string;
@@ -16,15 +26,13 @@ export interface ApplicationModel extends Document {
   resume: string;
   resumeUrl?: string;
   coverLetter: string;
-  questionAnswers: Array<{
-    question: string;
-    answer: string;
-  }>;
+  questionAnswers: QuestionAnswer[];
   applicationDate: Date;
   notes?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  meeting?: MeetingDetails; // ✅ NEW: Meeting details
 }
 
 export interface ApplicationResponse extends Omit<ApplicationModel, keyof Document> {
@@ -78,16 +86,18 @@ const ApplicationSchema = new Schema<ApplicationModel>(
       required: true,
       maxlength: 1000
     },
-    questionAnswers: [{
-      question: {
-        type: String,
-        required: true
-      },
-      answer: {
-        type: String,
-        required: true
+    questionAnswers: [
+      {
+        question: {
+          type: String,
+          required: true
+        },
+        answer: {
+          type: String,
+          required: true
+        }
       }
-    }],
+    ],
     applicationDate: {
       type: Date,
       default: Date.now,
@@ -96,7 +106,19 @@ const ApplicationSchema = new Schema<ApplicationModel>(
     notes: {
       type: String
     },
-    isDeleted: { type: Boolean, default: false },
+    meeting: {
+      eventId: { type: String },
+      link: { type: String },
+      start: { type: String },
+      end: { type: String },
+      summary: { type: String },
+      description: { type: String },
+      attendees: { type: Array }
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
     createdAt: {
       type: Date,
       default: Date.now
@@ -109,4 +131,4 @@ const ApplicationSchema = new Schema<ApplicationModel>(
   { timestamps: true }
 );
 
-export const ApplicationDto = model<ApplicationModel>('Application', ApplicationSchema); 
+export const ApplicationDto = model<ApplicationModel>('Application', ApplicationSchema);

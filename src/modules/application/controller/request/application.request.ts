@@ -19,4 +19,14 @@ export const submitApplicationSchema = z.object({
     .min(1, 'At least one question answer is required')
 });
 
+const scheduleRequestSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+  docLink: z.string().url('Invalid document link'),
+  startTime: z.string().min(1, 'Start time is required'),
+  endTime: z.string().min(1, 'End time is required'),
+  attendeesEmails: z.array(z.string().email('Invalid email address')).min(1, 'At least one attendee email is required'),
+});
+
+
 export type SubmitApplicationRequest = z.infer<typeof submitApplicationSchema>;
